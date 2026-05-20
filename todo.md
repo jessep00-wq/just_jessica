@@ -57,3 +57,12 @@
 - [x] Update HomePage layout to accommodate new sections
 - [x] Upload and integrate Jessica's profile photo
 - [x] Seed About Me bio into database
+
+## User Requested Updates (Sprint 3)
+- [x] Update hero tagline: replaced "healthcare operations" with "self-care, self-worth"
+- [x] Add newsletter signup form with elegant design and toast feedback
+- [x] Add Facebook link to footer (https://www.facebook.com/jessica.pettigrew3/)
+- [x] Create newsletter_subscribers database table
+- [x] Add tRPC procedure to handle newsletter signups
+- [x] Added admin-only listSubscribers procedure for viewing subscribers
+- [x] Added vitest tests for newsletter functionality (4 tests passing)

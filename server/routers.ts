@@ -117,6 +117,26 @@ export const appRouter = router({
       const { deletePost } = await import("./db");
       return deletePost(input.id);
     }),
+    subscribeNewsletter: publicProcedure.input((val: unknown) => {
+      if (typeof val === "object" && val !== null && "email" in val) {
+        const email = (val as { email: unknown }).email as string;
+        if (!email || !email.includes('@')) {
+          throw new Error("Invalid email address");
+        }
+        return { email };
+      }
+      throw new Error("Invalid input");
+    }).mutation(async ({ input }) => {
+      const { subscribeToNewsletter } = await import("./db");
+      return subscribeToNewsletter(input.email);
+    }),
+    listSubscribers: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized: admin access required");
+      }
+      const { getAllSubscribers } = await import("./db");
+      return getAllSubscribers();
+    }),
   }),
 });
 

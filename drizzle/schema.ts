@@ -59,3 +59,12 @@ export const authorBio = mysqlTable("author_bio", {
 
 export type AuthorBio = typeof authorBio.$inferSelect;
 export type InsertAuthorBio = typeof authorBio.$inferInsert;
+
+export const newsletterSubscribers = mysqlTable("newsletter_subscribers", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 320 }).notNull().unique(),
+  subscribedAt: timestamp("subscribedAt").defaultNow().notNull(),
+});
+
+export type NewsletterSubscriber = typeof newsletterSubscribers.$inferSelect;
+export type InsertNewsletterSubscriber = typeof newsletterSubscribers.$inferInsert;

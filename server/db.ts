@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, categories, blogPosts, InsertBlogPost, authorBio, InsertAuthorBio } from "../drizzle/schema";
+import { InsertUser, users, categories, blogPosts, InsertBlogPost, authorBio, InsertAuthorBio, newsletterSubscribers, InsertNewsletterSubscriber } from "../drizzle/schema";
 import { ENV } from './_core/env';
 import type { BlogPost, AuthorBio } from "../drizzle/schema";
 
@@ -157,4 +157,25 @@ export async function getFeaturedPosts(limit: number = 3) {
   const db = await getDb();
   if (!db) return [];
   return db.select().from(blogPosts).where(eq(blogPosts.featured, 1)).orderBy(blogPosts.createdAt).limit(limit).execute();
+}
+
+export async function subscribeToNewsletter(email: string): Promise<{ success: boolean; alreadySubscribed?: boolean }> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  try {
+    await db.insert(newsletterSubscribers).values({ email }).execute();
+    return { success: true };
+  } catch (error: any) {
+    if (error?.code === 'ER_DUP_ENTRY' || error?.message?.includes('Duplicate')) {
+      return { success: true, alreadySubscribed: true };
+    }
+    throw error;
+  }
+}
+
+export async function getAllSubscribers() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(newsletterSubscribers).orderBy(newsletterSubscribers.subscribedAt).execute();
 }

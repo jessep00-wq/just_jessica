@@ -5,8 +5,9 @@ import { BlogPostCard } from '@/components/BlogPostCard';
 import { AboutMe } from '@/components/AboutMe';
 import { FeaturedPosts } from '@/components/FeaturedPosts';
 import { SocialShare } from '@/components/SocialShare';
+import { NewsletterSignup } from '@/components/NewsletterSignup';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Facebook } from 'lucide-react';
 import { getLoginUrl } from '@/const';
 import { setOGMetaTags, getDefaultOGTags } from '@/lib/og';
 
@@ -88,7 +89,7 @@ export default function Home() {
               Stories on Life, Motherhood, and Identity
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
-              Personal essays and reflections on parenting, relationships, healthcare operations, and the everyday moments that shape us.
+              Personal essays and reflections on parenting, relationships, self-care, self-worth, and the everyday moments that shape us.
             </p>
           </div>
         </div>
@@ -142,10 +143,31 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Newsletter Signup Section */}
+      <section className="bg-background border-t border-border">
+        <div className="container max-w-4xl mx-auto px-4 py-12 md:py-16">
+          <NewsletterSignup />
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="bg-card border-t border-border">
-        <div className="container max-w-4xl mx-auto px-4 py-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Jessica. All rights reserved.</p>
+        <div className="container max-w-4xl mx-auto px-4 py-10">
+          <div className="flex flex-col items-center gap-4">
+            <a
+              href="https://www.facebook.com/jessica.pettigrew3/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-foreground hover:text-accent transition-colors group"
+              aria-label="Connect with Jessica on Facebook"
+            >
+              <Facebook className="w-5 h-5" />
+              <span className="font-medium">Connect on Facebook</span>
+            </a>
+            <p className="text-sm text-muted-foreground text-center">
+              &copy; {new Date().getFullYear()} Just Jessica. All rights reserved.
+            </p>
+          </div>
         </div>
       </footer>
     </div>
