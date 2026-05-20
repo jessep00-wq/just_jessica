@@ -49,3 +49,13 @@ export const blogPosts = mysqlTable("blog_posts", {
 
 export type BlogPost = typeof blogPosts.$inferSelect;
 export type InsertBlogPost = typeof blogPosts.$inferInsert;
+
+export const authorBio = mysqlTable("author_bio", {
+  id: int("id").autoincrement().primaryKey(),
+  bio: text("bio"),
+  photoUrl: varchar("photoUrl", { length: 500 }),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AuthorBio = typeof authorBio.$inferSelect;
+export type InsertAuthorBio = typeof authorBio.$inferInsert;

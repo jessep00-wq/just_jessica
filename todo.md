@@ -48,3 +48,12 @@
 - [x] Verify Facebook meta tags render correctly (OG utilities in place)
 - [x] Mobile device testing (responsive design with md: breakpoints)
 - [x] Create checkpoint and prepare for deployment
+
+## User Requested Updates (Current Sprint)
+- [x] Replace category section with "About Me" section featuring author photo - bio and photo seeded and displaying
+- [x] Add featured posts section to homepage
+- [x] Add social sharing buttons (Twitter, Pinterest, LinkedIn, Facebook) to posts
+- [x] Remove category filtering functionality
+- [x] Update HomePage layout to accommodate new sections
+- [x] Upload and integrate Jessica's profile photo
+- [x] Seed About Me bio into database

@@ -1,4 +1,5 @@
 import { COOKIE_NAME } from "@shared/const";
+import { TRPCError } from "@trpc/server";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
@@ -19,10 +20,11 @@ export const appRouter = router({
 
   blog: router({
     listAll: publicProcedure.query(async () => {
-      const { getAllPosts, getAllCategories } = await import("./db");
+      const { getAllPosts, getAllCategories, getAuthorBio } = await import("./db");
       const posts = await getAllPosts();
       const categories = await getAllCategories();
-      return { posts, categories };
+      const authorBioData = await getAuthorBio();
+      return { posts, categories, authorBio: authorBioData };
     }),
     listByCategory: publicProcedure.input((val: unknown) => {
       if (typeof val === "object" && val !== null && "categoryId" in val) {
@@ -36,6 +38,30 @@ export const appRouter = router({
     getFeatured: publicProcedure.query(async () => {
       const { getFeaturedPost } = await import("./db");
       return getFeaturedPost();
+    }),
+    getFeaturedPosts: publicProcedure.query(async () => {
+      const { getFeaturedPosts } = await import("./db");
+      return getFeaturedPosts(3);
+    }),
+    getAuthorBio: publicProcedure.query(async () => {
+      const { getAuthorBio } = await import("./db");
+      return getAuthorBio();
+    }),
+    updateAuthorBio: protectedProcedure.input((val: unknown) => {
+      if (typeof val === "object" && val !== null) {
+        const v = val as Record<string, unknown>;
+        return {
+          bio: v.bio as string | undefined,
+          photoUrl: v.photoUrl as string | undefined,
+        };
+      }
+      throw new Error("Invalid input");
+    }).mutation(async ({ ctx, input }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized: admin access required");
+      }
+      const { upsertAuthorBio } = await import("./db");
+      return upsertAuthorBio(input);
     }),
     create: protectedProcedure.input((val: unknown) => {
       if (typeof val === "object" && val !== null) {

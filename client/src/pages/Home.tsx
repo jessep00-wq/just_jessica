@@ -1,8 +1,10 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
 import { BlogPostCard } from '@/components/BlogPostCard';
-import { CategoryFilter } from '@/components/CategoryFilter';
+import { AboutMe } from '@/components/AboutMe';
+import { FeaturedPosts } from '@/components/FeaturedPosts';
+import { SocialShare } from '@/components/SocialShare';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { getLoginUrl } from '@/const';
@@ -10,7 +12,7 @@ import { setOGMetaTags, getDefaultOGTags } from '@/lib/og';
 
 export default function Home() {
   const { user } = useAuth();
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [expandedPostId, setExpandedPostId] = useState<number | null>(null);
 
   // Set default OG tags on mount
   useEffect(() => {
@@ -18,36 +20,28 @@ export default function Home() {
   }, []);
 
   const { data: blogData, isLoading } = trpc.blog.listAll.useQuery();
-  const { data: featuredPost } = trpc.blog.getFeatured.useQuery();
+  const { data: featuredPosts } = trpc.blog.getFeaturedPosts.useQuery();
+  const { data: authorBio } = trpc.blog.getAuthorBio.useQuery() as any;
 
-  // Update OG tags when featured post changes
+  // Update OG tags when featured posts change
   useEffect(() => {
-    if (featuredPost) {
+    if (featuredPosts && featuredPosts.length > 0) {
+      const firstFeatured = featuredPosts[0];
       setOGMetaTags({
-        title: `${featuredPost.title} - Just Jessica`,
-        description: featuredPost.excerpt,
-        image: featuredPost.ogImage || undefined,
+        title: `${firstFeatured.title} - Just Jessica`,
+        description: firstFeatured.excerpt,
+        image: firstFeatured.ogImage || undefined,
         url: window.location.href,
         type: 'article'
       });
     }
-  }, [featuredPost]);
+  }, [featuredPosts]);
 
-
-  // Filter posts by selected category
-  const filteredPosts = useMemo(() => {
+  // Separate featured and recent posts
+  const recentPosts = useMemo(() => {
     if (!blogData?.posts) return [];
-    if (selectedCategoryId === null) return blogData.posts;
-    return blogData.posts.filter(post => post.categoryId === selectedCategoryId);
-  }, [blogData?.posts, selectedCategoryId]);
-
-  // Create category map for quick lookup
-  const categoryMap = useMemo(() => {
-    if (!blogData?.categories) return {};
-    return Object.fromEntries(
-      blogData.categories.map(cat => [cat.id, cat])
-    );
-  }, [blogData?.categories]);
+    return blogData.posts.filter(post => post.featured === 0);
+  }, [blogData?.posts]);
 
   if (isLoading) {
     return (
@@ -100,42 +94,42 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Post */}
-      {featuredPost && (
+      {/* About Me Section */}
+      <section className="bg-background border-b border-border">
+        <div className="container max-w-4xl mx-auto px-4 py-12 md:py-16">
+          <AboutMe bio={authorBio} isAdmin={user?.role === 'admin'} />
+        </div>
+      </section>
+
+      {/* Featured Posts Section */}
+      {featuredPosts && featuredPosts.length > 0 && (
         <section className="bg-background border-b border-border">
           <div className="container max-w-4xl mx-auto px-4 py-12 md:py-16">
-            <div className="mb-4">
-              <span className="text-xs font-medium text-accent uppercase tracking-wider">
-                Featured
-              </span>
-            </div>
-            <BlogPostCard
-              post={featuredPost}
-              category={categoryMap[featuredPost.categoryId]}
-            />
+            <FeaturedPosts posts={featuredPosts} />
           </div>
         </section>
       )}
 
-      {/* Main Content */}
+      {/* Recent Posts Section */}
       <section className="bg-background">
         <div className="container max-w-4xl mx-auto px-4 py-12 md:py-16">
-          {/* Category Filter */}
-          <CategoryFilter
-            categories={blogData?.categories || []}
-            selectedId={selectedCategoryId}
-            onSelect={setSelectedCategoryId}
-          />
+          <h2 className="text-xl md:text-2xl font-serif font-semibold text-foreground mb-8 uppercase tracking-wider">
+            Recent Essays
+          </h2>
 
           {/* Posts Grid */}
           <div className="space-y-8">
-            {filteredPosts.length > 0 ? (
-              filteredPosts.map((post) => (
-                <BlogPostCard
-                  key={post.id}
-                  post={post}
-                  category={categoryMap[post.categoryId]}
-                />
+            {recentPosts.length > 0 ? (
+              recentPosts.map((post) => (
+                <div key={post.id}>
+                  <BlogPostCard post={post} />
+                  {expandedPostId === post.id && (
+                    <SocialShare
+                      title={post.title}
+                      excerpt={post.excerpt}
+                    />
+                  )}
+                </div>
               ))
             ) : (
               <div className="text-center py-12">

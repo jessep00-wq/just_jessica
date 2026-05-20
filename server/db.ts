@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, categories, blogPosts, InsertBlogPost } from "../drizzle/schema";
+import { InsertUser, users, categories, blogPosts, InsertBlogPost, authorBio, InsertAuthorBio } from "../drizzle/schema";
 import { ENV } from './_core/env';
-import type { BlogPost } from "../drizzle/schema";
+import type { BlogPost, AuthorBio } from "../drizzle/schema";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -132,4 +132,29 @@ export async function deletePost(id: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   return db.delete(blogPosts).where(eq(blogPosts.id, id)).execute();
+}
+
+export async function getAuthorBio(): Promise<AuthorBio | null | undefined> {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(authorBio).limit(1).execute();
+  return result.length > 0 ? result[0] : null;
+}
+
+export async function upsertAuthorBio(bio: InsertAuthorBio): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const existing = await getAuthorBio();
+  if (existing) {
+    await db.update(authorBio).set(bio).where(eq(authorBio.id, existing.id)).execute();
+  } else {
+    await db.insert(authorBio).values(bio).execute();
+  }
+}
+
+export async function getFeaturedPosts(limit: number = 3) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(blogPosts).where(eq(blogPosts.featured, 1)).orderBy(blogPosts.createdAt).limit(limit).execute();
 }

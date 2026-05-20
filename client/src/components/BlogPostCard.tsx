@@ -1,13 +1,14 @@
 import { useState } from 'react';
-
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { BlogPost } from '../../../drizzle/schema';
 import { motion, AnimatePresence } from 'framer-motion';
+import { SocialShare } from './SocialShare';
 
 interface BlogPostCardProps {
   post: BlogPost;
   category?: { name: string; slug: string };
+  showShare?: boolean;
 }
 
 export function BlogPostCard({ post, category }: BlogPostCardProps) {
@@ -132,6 +133,20 @@ export function BlogPostCard({ post, category }: BlogPostCardProps) {
           </motion.div>
         </Button>
       </motion.div>
+
+      {/* Social Share - shown when expanded */}
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <SocialShare title={post.title} excerpt={post.excerpt} />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </article>
   );
 }
