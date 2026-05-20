@@ -1,7 +1,9 @@
 import { useState } from 'react';
+
 import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { BlogPost } from '../../../drizzle/schema';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface BlogPostCardProps {
   post: BlogPost;
@@ -11,24 +13,57 @@ interface BlogPostCardProps {
 export function BlogPostCard({ post, category }: BlogPostCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Simple markdown-like rendering for rich text
+  // Enhanced markdown-like rendering for rich text
   const renderBody = (text: string) => {
     const lines = text.split('\n');
-    return lines.map((line, idx) => {
+    const elements: React.ReactNode[] = [];
+    let listItems: string[] = [];
+
+    const flushList = (): void => {
+      if (listItems.length > 0) {
+        elements.push(
+          <ul key={`list-${elements.length}`} className="list-disc list-inside ml-2 mb-4 space-y-1">
+            {listItems.map((item, idx) => (
+              <li key={idx} className="text-foreground">{item}</li>
+            ))}
+          </ul>
+        );
+        listItems = [];
+      }
+    };
+
+    lines.forEach((line: string, idx: number) => {
       if (line.startsWith('# ')) {
-        return <h3 key={idx} className="text-xl font-semibold mt-4 mb-2">{line.slice(2)}</h3>;
+        flushList();
+        elements.push(
+          <h3 key={`h3-${idx}`} className="text-xl font-serif font-semibold mt-4 mb-2">
+            {line.slice(2)}
+          </h3>
+        );
+      } else if (line.startsWith('## ')) {
+        flushList();
+        elements.push(
+          <h4 key={`h4-${idx}`} className="text-lg font-serif font-semibold mt-3 mb-2">
+            {line.slice(3)}
+          </h4>
+        );
+      } else if (line.startsWith('- ')) {
+        listItems.push(line.slice(2));
+      } else if (line.trim() === '') {
+        flushList();
+        elements.push(<div key={`spacer-${idx}`} className="h-2" />);
+      } else {
+        flushList();
+        elements.push(
+          <p key={`p-${idx}`} className="mb-3 text-foreground">
+            {line}
+          </p>
+        );
       }
-      if (line.startsWith('## ')) {
-        return <h4 key={idx} className="text-lg font-semibold mt-3 mb-2">{line.slice(3)}</h4>;
-      }
-      if (line.startsWith('- ')) {
-        return <li key={idx} className="ml-4">{line.slice(2)}</li>;
-      }
-      if (line.trim() === '') {
-        return <div key={idx} className="h-2" />;
-      }
-      return <p key={idx} className="mb-3">{line}</p>;
     });
+
+    flushList();
+    return elements as React.ReactNode[];
   };
 
   return (
@@ -61,26 +96,42 @@ export function BlogPostCard({ post, category }: BlogPostCardProps) {
         {post.excerpt}
       </p>
 
-      {/* Expanded content */}
-      {isExpanded && (
-        <div className="mt-6 pt-6 border-t border-border space-y-4 text-foreground">
-          {renderBody(post.body)}
-        </div>
-      )}
+      {/* Expanded content with animation */}
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            key="expanded-content"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="mt-6 pt-6 border-t border-border space-y-4 text-foreground overflow-hidden"
+          >
+            {renderBody(post.body)}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Read More / Read Less button */}
-      <Button
-        variant="ghost"
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="mt-4 group inline-flex items-center gap-2 text-accent hover:text-accent/80 p-0 h-auto font-medium"
+      <motion.div
+        initial={false}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.2 }}
       >
-        <span>{isExpanded ? 'Read Less' : 'Read More'}</span>
-        <ChevronDown
-          className={`w-4 h-4 transition-transform duration-200 ${
-            isExpanded ? 'rotate-180' : ''
-          }`}
-        />
-      </Button>
+        <Button
+          variant="ghost"
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="mt-4 group inline-flex items-center gap-2 text-accent hover:text-accent/80 p-0 h-auto font-medium transition-colors"
+        >
+          <span>{isExpanded ? 'Read Less' : 'Read More'}</span>
+          <motion.div
+            animate={{ rotate: isExpanded ? 180 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ChevronDown className="w-4 h-4" />
+          </motion.div>
+        </Button>
+      </motion.div>
     </article>
   );
 }

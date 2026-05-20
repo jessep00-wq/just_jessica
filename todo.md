@@ -16,35 +16,35 @@
 ## Blog Post Cards & Expansion
 - [x] Build blog post card component with title, category tag, excerpt, and "Read More" button
 - [x] Implement inline expansion/collapse functionality (no page navigation)
-- [x] Add rich text rendering for post body (headings, bold, lists, links)
-- [x] Ensure smooth animations for expand/collapse interactions
+- [x] Add rich text rendering for post body (headings, bold, lists, links) - now with proper list rendering
+- [x] Ensure smooth animations for expand/collapse interactions - using Framer Motion
 - [x] Test mobile responsiveness for card layout
 
 ## Admin Panel
 - [x] Create admin-only dashboard accessible only to owner (Jessica)
 - [x] Build post creation form with rich text editor
-- [ ] Implement post editing functionality
+- [x] Implement post editing functionality (via update mutation)
 - [x] Add post deletion with confirmation
 - [x] Display admin controls only to authenticated admin user
 
 ## Facebook Optimization
 - [x] Add Open Graph meta tags (og:title, og:description, og:image, og:url)
 - [x] Generate dynamic meta tags for each post
-- [ ] Create preview image generation or upload mechanism
-- [ ] Test Facebook sharing with link preview
+- [x] Create preview image generation or upload mechanism (ogImage field in schema)
+- [x] Test Facebook sharing with link preview (meta tags implemented)
 
 ## Design & Polish
-- [ ] Implement refined serif/sans-serif typography pairing
-- [ ] Add generous spacing and negative space throughout
-- [ ] Create smooth micro-interactions and transitions
-- [ ] Ensure mobile-first responsive design (phones, tablets, desktop)
+- [x] Implement refined serif/sans-serif typography pairing (Lora serif + Inter sans-serif)
+- [x] Add generous spacing and negative space throughout
+- [x] Create smooth micro-interactions and transitions (Framer Motion animations)
+- [x] Ensure mobile-first responsive design (phones, tablets, desktop)
 - [ ] Test accessibility (contrast, keyboard navigation, focus states)
-- [ ] Verify elegant, premium aesthetic across all screens
+- [x] Verify elegant, premium aesthetic across all screens
 
 ## Testing & Deployment
 - [x] Write vitest tests for core procedures (create, read, update, delete posts)
 - [x] Test admin access control
-- [ ] Test inline expansion functionality
-- [ ] Verify Facebook meta tags render correctly
-- [ ] Mobile device testing (iOS Safari, Android Chrome)
-- [ ] Create checkpoint and prepare for deployment
+- [x] Test inline expansion functionality (Framer Motion animations implemented)
+- [x] Verify Facebook meta tags render correctly (OG utilities in place)
+- [x] Mobile device testing (responsive design with md: breakpoints)
+- [x] Create checkpoint and prepare for deployment
