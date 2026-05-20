@@ -1,7 +1,7 @@
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, router } from "./_core/trpc";
+import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -17,12 +17,81 @@ export const appRouter = router({
     }),
   }),
 
-  // TODO: add feature routers here, e.g.
-  // todo: router({
-  //   list: protectedProcedure.query(({ ctx }) =>
-  //     db.getUserTodos(ctx.user.id)
-  //   ),
-  // }),
+  blog: router({
+    listAll: publicProcedure.query(async () => {
+      const { getAllPosts, getAllCategories } = await import("./db");
+      const posts = await getAllPosts();
+      const categories = await getAllCategories();
+      return { posts, categories };
+    }),
+    listByCategory: publicProcedure.input((val: unknown) => {
+      if (typeof val === "object" && val !== null && "categoryId" in val) {
+        return { categoryId: (val as { categoryId: unknown }).categoryId };
+      }
+      throw new Error("Invalid input");
+    }).query(async ({ input }) => {
+      const { getPostsByCategory } = await import("./db");
+      return getPostsByCategory(input.categoryId as number);
+    }),
+    getFeatured: publicProcedure.query(async () => {
+      const { getFeaturedPost } = await import("./db");
+      return getFeaturedPost();
+    }),
+    create: protectedProcedure.input((val: unknown) => {
+      if (typeof val === "object" && val !== null) {
+        const v = val as Record<string, unknown>;
+        return {
+          title: v.title as string,
+          excerpt: v.excerpt as string,
+          body: v.body as string,
+          categoryId: v.categoryId as number,
+          featured: v.featured as number,
+          ogImage: v.ogImage as string | undefined,
+        };
+      }
+      throw new Error("Invalid input");
+    }).mutation(async ({ ctx, input }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized: admin access required");
+      }
+      const { createPost } = await import("./db");
+      return createPost(input);
+    }),
+    update: protectedProcedure.input((val: unknown) => {
+      if (typeof val === "object" && val !== null) {
+        const v = val as Record<string, unknown>;
+        return {
+          id: v.id as number,
+          title: v.title as string | undefined,
+          excerpt: v.excerpt as string | undefined,
+          body: v.body as string | undefined,
+          categoryId: v.categoryId as number | undefined,
+          featured: v.featured as number | undefined,
+          ogImage: v.ogImage as string | undefined,
+        };
+      }
+      throw new Error("Invalid input");
+    }).mutation(async ({ ctx, input }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized: admin access required");
+      }
+      const { updatePost } = await import("./db");
+      const { id, ...updateData } = input;
+      return updatePost(id, updateData);
+    }),
+    delete: protectedProcedure.input((val: unknown) => {
+      if (typeof val === "object" && val !== null && "id" in val) {
+        return { id: (val as { id: unknown }).id as number };
+      }
+      throw new Error("Invalid input");
+    }).mutation(async ({ ctx, input }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized: admin access required");
+      }
+      const { deletePost } = await import("./db");
+      return deletePost(input.id);
+    }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;
