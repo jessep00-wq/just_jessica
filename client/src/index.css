@@ -1,6 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Anton:wght@400&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap');
 @import "tw-animate-css";
 
+@layer utilities {
+  @variant dark (&:is(.dark *));
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -43,27 +47,27 @@
 :root {
   /* Soft Futuristic Editorial Palette */
   /* Primary: Deep Plum/Wine */
-  --primary: oklch(0.35 0.18 310);
-  --primary-foreground: oklch(0.96 0.01 40);
+  --primary: oklch(0.35 0.18 310);     /* Deep plum #6B0050 */
+  --primary-foreground: oklch(0.96 0.01 40);  /* Warm ivory */
   --sidebar-primary: oklch(0.35 0.18 310);
   --sidebar-primary-foreground: oklch(0.96 0.01 40);
   
   /* Accent: Coral Orange */
-  --accent: oklch(0.62 0.22 25);
+  --accent: oklch(0.62 0.22 25);       /* Coral orange #FF7A1A */
   --accent-foreground: oklch(0.96 0.01 40);
   
   /* Secondary: Soft Peach */
-  --secondary: oklch(0.78 0.15 35);
+  --secondary: oklch(0.78 0.15 35);    /* Soft peach #F7B196 */
   --secondary-foreground: oklch(0.35 0.18 310);
   
   /* Background: Soft Lavender Haze */
-  --background: oklch(0.92 0.08 310);
+  --background: oklch(0.92 0.08 310);  /* Soft lavender #D7C4E8 */
   
   /* Foreground: Deep Plum */
-  --foreground: oklch(0.20 0.05 310);
+  --foreground: oklch(0.20 0.05 310);  /* Deep grounding #2A1022 */
   
   /* Card: Warm Ivory */
-  --card: oklch(0.96 0.01 40);
+  --card: oklch(0.96 0.01 40);         /* Warm ivory #FAF5EF */
   --card-foreground: oklch(0.20 0.05 310);
   
   /* Popover */
@@ -71,7 +75,7 @@
   --popover-foreground: oklch(0.20 0.05 310);
   
   /* Muted states */
-  --muted: oklch(0.85 0.08 310);
+  --muted: oklch(0.85 0.08 310);       /* Light lavender */
   --muted-foreground: oklch(0.45 0.10 310);
   
   /* Destructive */
@@ -92,11 +96,11 @@
   --sidebar-ring: oklch(0.35 0.18 310);
   
   /* Chart colors */
-  --chart-1: oklch(0.62 0.22 25);
-  --chart-2: oklch(0.78 0.15 35);
-  --chart-3: oklch(0.35 0.18 310);
-  --chart-4: oklch(0.92 0.08 310);
-  --chart-5: oklch(0.45 0.10 310);
+  --chart-1: oklch(0.62 0.22 25);      /* Coral */
+  --chart-2: oklch(0.78 0.15 35);      /* Peach */
+  --chart-3: oklch(0.35 0.18 310);     /* Plum */
+  --chart-4: oklch(0.92 0.08 310);     /* Lavender */
+  --chart-5: oklch(0.45 0.10 310);     /* Muted plum */
   
   --radius: 0.5rem;
 }
@@ -131,12 +135,11 @@
 
 @layer base {
   * {
-    border-color: var(--border);
+    @apply border-border;
   }
   
   body {
-    background-color: var(--background);
-    color: var(--foreground);
+    @apply bg-background text-foreground;
     font-family: 'Inter', sans-serif;
   }
   
@@ -146,6 +149,7 @@
     letter-spacing: -0.02em;
   }
   
+  /* Hero headline: Bold, condensed, oversized */
   .hero-headline {
     font-family: 'Anton', sans-serif;
     font-size: clamp(2.5rem, 8vw, 5rem);
@@ -154,6 +158,7 @@
     font-weight: 400;
   }
   
+  /* Editorial serif for article titles */
   .editorial-title {
     font-family: 'Cormorant Garamond', serif;
     font-size: clamp(1.75rem, 5vw, 2.5rem);
@@ -161,6 +166,7 @@
     font-weight: 700;
   }
   
+  /* Body text */
   p {
     font-family: 'Inter', sans-serif;
     line-height: 1.7;
@@ -168,66 +174,25 @@
   }
   
   a {
-    color: var(--accent);
-    transition: color 0.2s;
-  }
-  
-  a:hover {
-    opacity: 0.8;
+    @apply text-accent hover:text-accent/80 transition-colors;
   }
   
   button {
-    transition: all 0.2s;
+    @apply transition-all duration-200;
   }
   
   .container {
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 80rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-  
-  @media (min-width: 640px) {
-    .container {
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
-    }
-  }
-  
-  @media (min-width: 1024px) {
-    .container {
-      padding-left: 2rem;
-      padding-right: 2rem;
-    }
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
   }
 }
 
 @layer components {
   .btn-primary {
-    background-color: var(--primary);
-    color: var(--primary-foreground);
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    font-weight: 500;
-    transition: all 0.2s;
-  }
-  
-  .btn-primary:hover {
-    opacity: 0.9;
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 rounded-lg font-medium transition-all;
   }
   
   .btn-accent {
-    background-color: var(--accent);
-    color: var(--accent-foreground);
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    font-weight: 500;
-    transition: all 0.2s;
-  }
-  
-  .btn-accent:hover {
-    opacity: 0.9;
+    @apply bg-accent text-accent-foreground hover:bg-accent/90 px-6 py-3 rounded-lg font-medium transition-all;
   }
   
   .gradient-lavender-coral {
@@ -246,6 +211,7 @@
     box-shadow: 0 0 30px rgba(107, 0, 80, 0.15);
   }
   
+  /* Gradient orb backgrounds */
   .orb-gradient {
     position: relative;
     overflow: hidden;
@@ -279,24 +245,14 @@
     pointer-events: none;
   }
   
+  /* Featured section styling */
   .featured-card {
+    @apply bg-card rounded-lg p-6 md:p-8 border border-border hover:shadow-lg transition-shadow;
     background: linear-gradient(135deg, oklch(0.96 0.01 40) 0%, oklch(0.92 0.08 310) 100%);
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    border: 1px solid var(--border);
-    transition: box-shadow 0.2s;
-  }
-  
-  .featured-card:hover {
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   }
   
   .featured-badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.875rem;
-    font-weight: 500;
+    @apply inline-block px-3 py-1 rounded-full text-sm font-medium;
     background: linear-gradient(135deg, oklch(0.62 0.22 25) 0%, oklch(0.78 0.15 35) 100%);
     color: oklch(0.96 0.01 40);
   }
@@ -304,38 +260,15 @@
 
 @layer utilities {
   .text-hero {
-    font-size: 2.25rem;
-    font-weight: bold;
-    line-height: 1.2;
-  }
-  
-  @media (min-width: 768px) {
-    .text-hero {
-      font-size: 3.75rem;
-    }
+    @apply text-4xl md:text-6xl font-bold leading-tight;
   }
   
   .text-editorial {
-    font-size: 1.5rem;
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 600;
-  }
-  
-  @media (min-width: 768px) {
-    .text-editorial {
-      font-size: 1.875rem;
-    }
+    @apply text-2xl md:text-3xl font-serif font-semibold;
   }
   
   .text-body {
-    font-size: 1rem;
-    line-height: 1.625;
-  }
-  
-  @media (min-width: 768px) {
-    .text-body {
-      font-size: 1.125rem;
-    }
+    @apply text-base md:text-lg leading-relaxed;
   }
   
   .glass-effect {
