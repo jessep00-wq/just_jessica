@@ -1,20 +1,35 @@
 import { useState } from 'react';
-import { ChevronDown, Share2 } from 'lucide-react';
+import { ChevronDown, Clock, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { BlogPost } from '../../../drizzle/schema';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SocialShare } from './SocialShare';
+import { Link } from 'wouter';
+import { estimateReadingTimeMinutes, getPostHref } from '@/lib/blog';
+import { trackUxEvent } from '@/lib/analytics';
 
 interface BlogPostCardProps {
   post: BlogPost;
   category?: { name: string; slug: string };
-  showShare?: boolean;
 }
 
 export function BlogPostCard({ post, category }: BlogPostCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const readingTime = estimateReadingTimeMinutes(`${post.excerpt}\n${post.body}`);
 
-  // Enhanced markdown-like rendering for rich text
+  const handleToggleExpand = () => {
+    const nextExpanded = !isExpanded;
+    setIsExpanded(nextExpanded);
+
+    if (nextExpanded) {
+      trackUxEvent('post_expand', { postId: post.id, title: post.title });
+    }
+  };
+
+  const handleOpenPost = () => {
+    trackUxEvent('post_open_click', { postId: post.id, title: post.title });
+  };
+
   const renderBody = (text: string) => {
     const lines = text.split('\n');
     const elements: React.ReactNode[] = [];
@@ -69,7 +84,6 @@ export function BlogPostCard({ post, category }: BlogPostCardProps) {
 
   return (
     <article className="border border-border rounded-sm p-6 md:p-8 bg-card hover:shadow-sm transition-shadow duration-200">
-      {/* Header with category and date */}
       <div className="flex items-start justify-between gap-4 mb-4">
         <div className="flex flex-col gap-2">
           {category && (
@@ -83,21 +97,48 @@ export function BlogPostCard({ post, category }: BlogPostCardProps) {
         </div>
       </div>
 
-      {/* Date */}
-      <p className="text-sm text-muted-foreground mb-4">
-        {new Date(post.createdAt).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        })}
-      </p>
+      <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mb-4">
+        <p>
+          {new Date(post.createdAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })}
+        </p>
+        <span aria-hidden="true">•</span>
+        <p className="inline-flex items-center gap-1">
+          <Clock className="w-3.5 h-3.5" />
+          {readingTime} min read
+        </p>
+      </div>
 
-      {/* Excerpt */}
       <p className="text-base leading-relaxed text-foreground mb-6">
         {post.excerpt}
       </p>
 
-      {/* Expanded content with animation */}
+      <div className="flex flex-wrap items-center gap-4">
+        <Button
+          variant="ghost"
+          onClick={handleToggleExpand}
+          className="group inline-flex items-center gap-2 text-accent hover:text-accent/80 p-0 h-auto font-medium transition-colors"
+        >
+          <span>{isExpanded ? 'Read Less' : 'Quick Preview'}</span>
+          <motion.div
+            animate={{ rotate: isExpanded ? 180 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ChevronDown className="w-4 h-4" />
+          </motion.div>
+        </Button>
+
+        <Link href={getPostHref(post)} onClick={handleOpenPost} className="inline-flex">
+          <Button variant="outline" className="rounded-sm inline-flex items-center gap-2">
+            Read Full Essay
+            <ExternalLink className="w-4 h-4" />
+          </Button>
+        </Link>
+      </div>
+
       <AnimatePresence>
         {isExpanded && (
           <motion.div
@@ -113,28 +154,6 @@ export function BlogPostCard({ post, category }: BlogPostCardProps) {
         )}
       </AnimatePresence>
 
-      {/* Read More / Read Less button */}
-      <motion.div
-        initial={false}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.2 }}
-      >
-        <Button
-          variant="ghost"
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="mt-4 group inline-flex items-center gap-2 text-accent hover:text-accent/80 p-0 h-auto font-medium transition-colors"
-        >
-          <span>{isExpanded ? 'Read Less' : 'Read More'}</span>
-          <motion.div
-            animate={{ rotate: isExpanded ? 180 : 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <ChevronDown className="w-4 h-4" />
-          </motion.div>
-        </Button>
-      </motion.div>
-
-      {/* Social Share - shown when expanded */}
       <AnimatePresence>
         {isExpanded && (
           <motion.div
@@ -143,7 +162,7 @@ export function BlogPostCard({ post, category }: BlogPostCardProps) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <SocialShare title={post.title} excerpt={post.excerpt} />
+            <SocialShare title={post.title} excerpt={post.excerpt} url={typeof window !== 'undefined' ? `${window.location.origin}${getPostHref(post)}` : undefined} />
           </motion.div>
         )}
       </AnimatePresence>

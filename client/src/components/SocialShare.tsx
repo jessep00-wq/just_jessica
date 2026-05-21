@@ -1,6 +1,7 @@
 import { Share2, Facebook, Twitter, Pin, Linkedin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { trackUxEvent } from '@/lib/analytics';
 
 interface SocialShareProps {
   title: string;
@@ -9,7 +10,7 @@ interface SocialShareProps {
 }
 
 export function SocialShare({ title, excerpt, url }: SocialShareProps) {
-  const currentUrl = url || typeof window !== 'undefined' ? window.location.href : '';
+  const currentUrl = url || (typeof window !== 'undefined' ? window.location.href : '');
   const encodedUrl = encodeURIComponent(currentUrl);
   const encodedTitle = encodeURIComponent(title);
   const encodedExcerpt = encodeURIComponent(excerpt);
@@ -17,7 +18,7 @@ export function SocialShare({ title, excerpt, url }: SocialShareProps) {
   const shareLinks = {
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
     twitter: `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`,
-    pinterest: `https://pinterest.com/pin/create/button/?description=${encodedTitle}&url=${encodedUrl}`,
+    pinterest: `https://pinterest.com/pin/create/button/?description=${encodedExcerpt}&url=${encodedUrl}`,
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
   };
 
@@ -26,6 +27,8 @@ export function SocialShare({ title, excerpt, url }: SocialShareProps) {
     const height = 400;
     const left = window.innerWidth / 2 - width / 2;
     const top = window.innerHeight / 2 - height / 2;
+
+    trackUxEvent('post_share_click', { platform, title });
 
     window.open(
       shareLinks[platform],
@@ -36,6 +39,7 @@ export function SocialShare({ title, excerpt, url }: SocialShareProps) {
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(currentUrl);
+    trackUxEvent('post_share_copy_link', { title });
     toast.success('Link copied to clipboard');
   };
 
