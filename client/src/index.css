@@ -41,37 +41,49 @@
 }
 
 :root {
-  /* Warm Elegant Palette */
+  /* Soft Futuristic Editorial Palette */
+  /* Primary: Deep Plum/Wine */
   --primary: oklch(0.35 0.18 310);
   --primary-foreground: oklch(0.96 0.01 40);
   --sidebar-primary: oklch(0.35 0.18 310);
   --sidebar-primary-foreground: oklch(0.96 0.01 40);
   
+  /* Accent: Coral Orange */
   --accent: oklch(0.62 0.22 25);
   --accent-foreground: oklch(0.96 0.01 40);
   
+  /* Secondary: Soft Peach */
   --secondary: oklch(0.78 0.15 35);
   --secondary-foreground: oklch(0.35 0.18 310);
   
+  /* Background: Soft Lavender Haze */
   --background: oklch(0.92 0.08 310);
+  
+  /* Foreground: Deep Plum */
   --foreground: oklch(0.20 0.05 310);
   
+  /* Card: Warm Ivory */
   --card: oklch(0.96 0.01 40);
   --card-foreground: oklch(0.20 0.05 310);
   
+  /* Popover */
   --popover: oklch(0.96 0.01 40);
   --popover-foreground: oklch(0.20 0.05 310);
   
+  /* Muted states */
   --muted: oklch(0.85 0.08 310);
   --muted-foreground: oklch(0.45 0.10 310);
   
+  /* Destructive */
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0 0);
   
+  /* Border: Soft lavender */
   --border: oklch(0.88 0.06 310);
   --input: oklch(0.96 0.01 40);
   --ring: oklch(0.35 0.18 310);
   
+  /* Sidebar */
   --sidebar: oklch(0.96 0.01 40);
   --sidebar-foreground: oklch(0.20 0.05 310);
   --sidebar-accent: oklch(0.62 0.22 25);
@@ -79,6 +91,7 @@
   --sidebar-border: oklch(0.88 0.06 310);
   --sidebar-ring: oklch(0.35 0.18 310);
   
+  /* Chart colors */
   --chart-1: oklch(0.62 0.22 25);
   --chart-2: oklch(0.78 0.15 35);
   --chart-3: oklch(0.35 0.18 310);
@@ -198,8 +211,6 @@
     border-radius: 0.5rem;
     font-weight: 500;
     transition: all 0.2s;
-    border: none;
-    cursor: pointer;
   }
   
   .btn-primary:hover {
@@ -213,8 +224,6 @@
     border-radius: 0.5rem;
     font-weight: 500;
     transition: all 0.2s;
-    border: none;
-    cursor: pointer;
   }
   
   .btn-accent:hover {
