@@ -83,7 +83,12 @@ export function BlogPostCard({ post, category }: BlogPostCardProps) {
   };
 
   return (
-    <article className="border border-border rounded-sm p-6 md:p-8 bg-card hover:shadow-sm transition-shadow duration-200">
+    <article className="border border-border rounded-lg p-6 md:p-8 bg-card hover:shadow-lg transition-all duration-200">
+      {/* Top Share Buttons */}
+      <div className="flex justify-end mb-4 opacity-60 hover:opacity-100 transition-opacity">
+        <SocialShare title={post.title} excerpt={post.excerpt} url={typeof window !== 'undefined' ? `${window.location.origin}${getPostHref(post)}` : undefined} />
+      </div>
+
       <div className="flex items-start justify-between gap-4 mb-4">
         <div className="flex flex-col gap-2">
           {category && (
@@ -154,6 +159,7 @@ export function BlogPostCard({ post, category }: BlogPostCardProps) {
         )}
       </AnimatePresence>
 
+      {/* Bottom Share Buttons */}
       <AnimatePresence>
         {isExpanded && (
           <motion.div
@@ -161,8 +167,23 @@ export function BlogPostCard({ post, category }: BlogPostCardProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
+            className="mt-6 pt-6 border-t border-border"
           >
-            <SocialShare title={post.title} excerpt={post.excerpt} url={typeof window !== 'undefined' ? `${window.location.origin}${getPostHref(post)}` : undefined} />
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <p className="text-sm text-muted-foreground">Share this essay</p>
+                <SocialShare title={post.title} excerpt={post.excerpt} url={typeof window !== 'undefined' ? `${window.location.origin}${getPostHref(post)}` : undefined} />
+              </div>
+              
+              {/* Newsletter CTA inside expanded content */}
+              <div className="bg-gradient-to-r from-secondary/10 to-accent/10 rounded-lg p-4 border border-secondary/20">
+                <p className="text-sm font-medium text-foreground mb-2">Loved this essay?</p>
+                <p className="text-xs text-foreground/70 mb-3">Subscribe to receive new essays like this delivered to your inbox.</p>
+                <a href="#newsletter" className="text-accent hover:text-accent/80 text-sm font-medium transition-colors">
+                  Join the newsletter →
+                </a>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

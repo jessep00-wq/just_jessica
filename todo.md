@@ -66,3 +66,14 @@
 - [x] Add tRPC procedure to handle newsletter signups
 - [x] Added admin-only listSubscribers procedure for viewing subscribers
 - [x] Added vitest tests for newsletter functionality (4 tests passing)
+
+## Critical Fixes (Sprint 4 - Design Overhaul)
+- [x] Update color palette: lavender/plum/coral/peach/ivory with gradients - OKLCH palette implemented
+- [x] Replace generic fonts with bold editorial pairing (Anton for headlines, Cormorant Garamond for serif, Inter for body)
+- [x] Redesign hero section with dramatic oversized typography and gradient shapes - with animated orbs
+- [x] Fix About Me section: ensure author photo displays correctly (not placeholder) - photo displays with glow effect
+- [x] Move newsletter signup to hero section (above fold) - integrated in hero
+- [x] Add secondary newsletter signup after essay content - added in dedicated section
+- [x] Create visual distinction between Featured and Recent sections - grid layout with featured badges
+- [x] Add share buttons to top and bottom of essay cards - top (desktop) and bottom (expanded)
+- [x] Test all changes and verify responsive design - all 10 tests passing, no TypeScript errors
