@@ -17,11 +17,11 @@ export function FeaturedPosts() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
       {featuredPosts.map((post) => (
         <div
           key={post.id}
-          className="featured-card group hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+          className="featured-card group hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 min-h-[260px]"
         >
           {/* Featured Badge */}
           <div className="mb-4">
@@ -29,7 +29,7 @@ export function FeaturedPosts() {
           </div>
 
           {/* Title */}
-          <h3 className="editorial-title text-foreground mb-3 line-clamp-2 group-hover:text-accent transition-colors">
+          <h3 className="editorial-title text-foreground mb-4 line-clamp-2 group-hover:text-accent transition-colors text-3xl md:text-4xl">
             {post.title}
           </h3>
 

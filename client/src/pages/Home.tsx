@@ -101,7 +101,8 @@ export default function Home() {
 
       {/* Featured Essays Section */}
       {featuredPosts && featuredPosts.length > 0 && (
-        <section className="bg-gradient-to-b from-background via-muted/30 to-background border-b border-border">
+        <section className="relative bg-[linear-gradient(180deg,rgba(250,245,239,0.95)_0%,rgba(247,177,150,0.2)_45%,rgba(199,178,216,0.25)_100%)] border-y border-border/60 overflow-hidden">
+          <div className="absolute -top-20 -right-10 w-72 h-72 rounded-full blur-3xl opacity-25 bg-[radial-gradient(circle,rgba(255,122,26,0.65)_0%,transparent_70%)]" />
           <div className="container max-w-4xl mx-auto px-4 py-16 md:py-24">
             <div className="mb-12">
               <h2 className="editorial-title text-foreground mb-2">Featured Essays</h2>
@@ -113,7 +114,7 @@ export default function Home() {
       )}
 
       {/* Recent Essays Section */}
-      <section className="bg-background">
+      <section className="bg-background/70 backdrop-blur-sm">
         <div className="container max-w-4xl mx-auto px-4 py-16 md:py-24">
           <div className="mb-12">
             <h2 className="editorial-title text-foreground mb-2">Recent Essays</h2>

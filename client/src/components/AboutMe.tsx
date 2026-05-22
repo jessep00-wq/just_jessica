@@ -13,6 +13,9 @@ interface AboutMeProps {
   bio?: AuthorBio | null;
 }
 
+const FALLBACK_AUTHOR_PORTRAIT =
+  'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=900&q=80';
+
 export function AboutMe({ bio }: AboutMeProps) {
   const { user } = useAuth();
   const { data: authorBio } = trpc.blog.getAuthorBio.useQuery() as any;
@@ -101,9 +104,12 @@ export function AboutMe({ bio }: AboutMeProps) {
               className="w-full md:w-48 h-auto md:h-64 object-cover rounded-lg shadow-xl glow-plum"
             />
           ) : (
-            <div className="w-full md:w-48 h-64 bg-muted rounded-lg flex items-center justify-center">
-              <span className="text-muted-foreground">No photo</span>
-            </div>
+            <img
+              src={FALLBACK_AUTHOR_PORTRAIT}
+              alt="Jessica portrait"
+              className="w-full md:w-48 h-auto md:h-64 object-cover rounded-lg shadow-xl glow-plum"
+              loading="lazy"
+            />
           )}
         </div>
 
