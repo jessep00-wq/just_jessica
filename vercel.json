@@ -15,5 +15,12 @@
       "source": "/404",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/**/*.ts": {
+      "includeFiles": [
+        "dist/index.js"
+      ]
+    }
+  }
 }
