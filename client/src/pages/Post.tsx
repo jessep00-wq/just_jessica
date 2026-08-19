@@ -138,6 +138,7 @@ export default function PostPage() {
   }
 
   const readingTime = estimateReadingTimeMinutes(post.body);
+  const bodyParagraphs = post.body.split('\n');
 
   return (
     <div className="min-h-screen bg-background">
@@ -176,15 +177,32 @@ export default function PostPage() {
             </p>
           </div>
           <p className="text-lg text-muted-foreground leading-relaxed">{post.excerpt}</p>
+
+          <SocialShare
+            title={post.title}
+            excerpt={post.excerpt}
+            url={typeof window !== 'undefined' ? window.location.href : undefined}
+          />
         </header>
 
         <div className="prose prose-lg max-w-none prose-headings:font-serif prose-headings:text-foreground prose-p:text-foreground prose-p:leading-8 prose-li:text-foreground">
-          {post.body.split('\n').map((line, index) => {
+          {bodyParagraphs.map((line, index) => {
             if (!line.trim()) return <div key={`space-${index}`} className="h-4" />;
             if (line.startsWith('## ')) return <h2 key={`h2-${index}`}>{line.slice(3)}</h2>;
             if (line.startsWith('# ')) return <h3 key={`h3-${index}`}>{line.slice(2)}</h3>;
             if (line.startsWith('- ')) return <li key={`li-${index}`}>{line.slice(2)}</li>;
-            return <p key={`p-${index}`}>{line}</p>;
+            const paragraphCount = bodyParagraphs.slice(0, index + 1).filter((item) => item.trim() && !item.startsWith('#') && !item.startsWith('- ')).length;
+
+            return (
+              <div key={`p-wrap-${index}`}>
+                <p key={`p-${index}`}>{line}</p>
+                {paragraphCount === 2 && (
+                  <div className="not-prose my-10">
+                    <NewsletterSignup source="post_inline" compact />
+                  </div>
+                )}
+              </div>
+            );
           })}
         </div>
 
@@ -194,10 +212,6 @@ export default function PostPage() {
           url={typeof window !== 'undefined' ? window.location.href : undefined}
         />
       </article>
-
-      <section className="container max-w-3xl mx-auto px-4 pb-12 md:pb-16">
-        <NewsletterSignup source="post_inline" compact />
-      </section>
 
       <section id="related" className="container max-w-3xl mx-auto px-4 pb-16">
         <h2 className="text-2xl font-serif font-semibold text-foreground mb-6">Continue reading</h2>
