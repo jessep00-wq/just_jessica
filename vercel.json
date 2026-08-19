@@ -18,7 +18,7 @@
   ],
   "functions": {
     "api/**/*.ts": {
-      "includeFiles": "dist/index.js"
+      "includeFiles": "dist/app.js"
     }
   }
 }
